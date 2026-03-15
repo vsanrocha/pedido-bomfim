@@ -44,7 +44,7 @@ export function renderLineSection(lineData) {
     const grid = document.createElement("div");
     grid.className = "kit-grid";
     lineData.kits.forEach((kit) => {
-      grid.appendChild(renderKitCard(kit, lineData.image));
+      grid.appendChild(renderKitCard(kit, lineData.image, lineData.line));
     });
     section.appendChild(grid);
   }
