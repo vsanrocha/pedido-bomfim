@@ -1,4 +1,6 @@
 import { catalog } from "../data/catalog.js";
+import { openCart } from "./cart-panel.js";
+import { getTotals } from "../store/cart.js";
 
 function slugify(text) {
   return text
@@ -22,6 +24,10 @@ export function renderHeader() {
         <div class="header-title">Distribuidora Bomfim</div>
         <div class="header-subtitle">Catalog of professional hair care products</div>
       </div>
+      <button class="cart-btn" id="open-cart-btn" aria-label="Abrir carrinho">
+        🛒 Carrinho
+        <span class="cart-btn-count" data-empty="true">0</span>
+      </button>
     </div>
     <nav class="nav-chips" role="navigation" aria-label="Product lines">
       ${catalog
@@ -33,13 +39,21 @@ export function renderHeader() {
     </nav>
   `;
 
-  // Chip click → scroll to section
+  const cartBtn = header.querySelector("#open-cart-btn");
+  const countBadge = header.querySelector(".cart-btn-count");
+
+  cartBtn.addEventListener("click", openCart);
+
+  window.addEventListener("cart:change", () => {
+    const { itemCount } = getTotals();
+    countBadge.textContent = itemCount;
+    countBadge.dataset.empty = itemCount === 0 ? "true" : "false";
+  });
+
   header.querySelectorAll(".nav-chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       const target = document.getElementById(chip.dataset.target);
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth" });
-      }
+      if (target) target.scrollIntoView({ behavior: "smooth" });
     });
   });
 
@@ -62,7 +76,6 @@ export function setupScrollSpy() {
           );
           if (activeChip) {
             activeChip.classList.add("active");
-            // Scroll chip into view in nav bar
             activeChip.scrollIntoView({
               behavior: "smooth",
               block: "nearest",
