@@ -29,10 +29,16 @@
   --shadow-card-hover: 0 6px 24px rgba(107, 66, 38, 0.14);
 
   --header-height: 120px;
+
+  --cart-panel-width: 420px;
+  --z-cart: 200;
+  --cart-bg: #FFFCF8;
+  --cart-header-bg: var(--dark-brown);
 }
 
 @media (max-width: 768px) {
   :root {
     --header-height: 100px;
+    --cart-panel-width: 100vw;
   }
 }
