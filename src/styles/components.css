@@ -269,7 +269,7 @@
 
 .avulso-row {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto auto auto;
   gap: var(--space-md);
   padding: var(--space-sm) var(--space-md);
   align-items: center;
@@ -347,9 +347,20 @@
   }
 
   .avulso-row {
-    grid-template-columns: 1fr;
-    gap: var(--space-xs);
+    grid-template-columns: 1fr auto;
+    gap: var(--space-xs) var(--space-sm);
     padding: var(--space-sm) var(--space-md);
+  }
+
+  .avulso-row .product-volume,
+  .avulso-row .product-price {
+    grid-column: auto;
+  }
+
+  .avulso-row .avulso-row-controls {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: center;
   }
 
   .avulso-row .product-volume,

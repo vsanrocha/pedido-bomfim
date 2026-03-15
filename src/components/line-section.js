@@ -1,8 +1,9 @@
 import { renderKitCard } from "./kit-card.js";
 import { formatBRL } from "../utils/currency.js";
+import { addAvulso } from "../store/cart.js";
 
 function slugify(text) {
-  return text
+  return String(text)
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -28,7 +29,7 @@ export function renderLineSection(lineData) {
   `;
   section.appendChild(header);
 
-  // Line image (for lines without kits, show the image at top)
+  // Line image (for lines without kits)
   if (lineData.image && lineData.kits.length === 0) {
     const imgContainer = document.createElement("div");
     imgContainer.className = "line-image-container";
@@ -72,13 +73,47 @@ export function renderLineSection(lineData) {
       table.className = "avulso-table";
 
       products.forEach((p) => {
+        const itemId = `${slugify(lineData.line)}--avulso--${slugify(p.name)}--${slugify(p.volume)}`;
+
         const row = document.createElement("div");
         row.className = "avulso-row";
         row.innerHTML = `
           <span class="product-name">${p.name}</span>
           <span class="product-volume">${p.volume}</span>
           <span class="product-price">${formatBRL(p.price)}</span>
+          <div class="avulso-row-controls">
+            <input
+              class="avulso-qty-input"
+              type="number"
+              min="1"
+              max="99"
+              value="1"
+              aria-label="Quantidade de ${p.name}"
+            />
+            <button
+              class="avulso-add-btn"
+              data-item-id="${itemId}"
+              data-name="${p.name}"
+              data-volume="${p.volume}"
+              data-price="${p.price}"
+            >+ Adicionar</button>
+          </div>
         `;
+
+        row.querySelector(".avulso-add-btn").addEventListener("click", (e) => {
+          const btn = e.currentTarget;
+          const qty = Math.max(1, parseInt(row.querySelector(".avulso-qty-input").value, 10) || 1);
+          addAvulso({
+            id: btn.dataset.itemId,
+            name: btn.dataset.name,
+            volume: btn.dataset.volume,
+            price: parseFloat(btn.dataset.price),
+            fromKit: "Avulso",
+            lineName: lineData.line,
+            quantity: qty,
+          });
+        });
+
         table.appendChild(row);
       });
 
